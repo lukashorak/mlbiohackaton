@@ -18,7 +18,7 @@ public class Main {
 			String[] params = Arrays.copyOfRange(args, 2, args.length);
 			StockManager sm = new StockManager(stockId);
 
-			Class cls;
+			Class<?> cls;
 			try {
 				cls = Class.forName(StockManager.class.getCanonicalName());
 				Method[] methods = cls.getDeclaredMethods();
@@ -27,8 +27,9 @@ public class Main {
 					if (m.getName().equals(method)) {
 						System.out.println(">>" + m.getName());
 
-						List<? extends IStockDayObject> ret = (List<? extends IStockDayObject>) m
-								.invoke(sm, params);
+						Object o = m.invoke(sm, (Object[]) params);
+						@SuppressWarnings("unchecked")
+						List<? extends IStockDayObject> ret = (List<? extends IStockDayObject>) o;
 
 						System.out.println("\t>>" + ret.size());
 

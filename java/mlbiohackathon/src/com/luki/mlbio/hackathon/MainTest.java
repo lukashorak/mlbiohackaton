@@ -22,9 +22,9 @@ public class MainTest {
 		String argsGetByMonth[] = { "2317", "getByMonth", "2012", "10" };
 		String argsGetByDate[] = { "2317", "getByDate", "2012", "10", "17" };
 
-		m.main(argsGetAll);
-		m.main(argsGetByDuration);
-		m.main(argsGetByMonth);
-		m.main(argsGetByDate);
+		Main.main(argsGetAll);
+		Main.main(argsGetByDuration);
+		Main.main(argsGetByMonth);
+		Main.main(argsGetByDate);
 	}
 }

@@ -25,7 +25,6 @@ public class StockManagerTest {
 		if (data == null) {
 			fail("Empty data");
 		}
-		// fail("Not yet implemented");
 	}
 
 	@Test
