@@ -1,6 +1,7 @@
 package com.luki.mlbio.hackathon.portfolio;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,7 +75,9 @@ public class PortfolioOptimization {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		PortfolioOptimization p = new PortfolioOptimization();
-		p.fillData();
+		File dir = new File("c:\\PROG\\ml\\data2\\");
+		p.readFromDir(dir);
+//		p.fillData();
 		p.optimize();
 
 	}
@@ -92,7 +95,7 @@ public class PortfolioOptimization {
 				for (StockDayObject o : dataRaw) {
 					Double v = Double.valueOf(o.adjClose);
 					v += r.nextGaussian();
-					v = Math.round(v*100D)/100D;
+					v = Math.round(v * 100D) / 100D;
 					data.add(v);
 				}
 
@@ -105,6 +108,42 @@ public class PortfolioOptimization {
 				ex.printStackTrace();
 			}
 		}
+	}
+
+	public void readFromDir(File dir) {
+		if (dir.isDirectory()) {
+			FilenameFilter filter = new FilenameFilter() {
+				public boolean accept(File directory, String fileName) {
+					return fileName.endsWith(".csv");
+				}
+			};
+			File[] files = dir.listFiles(filter);
+
+			for (File f : files) {
+				
+				try {
+					String s = f.getName().replace(".csv", "");
+					StockManager sm = new StockManager(f.getCanonicalPath().replace(".csv", ""));
+					
+					List<StockDayObject> dataRaw = (List<StockDayObject>) sm
+							.getAll();
+					ArrayList<Double> data = new ArrayList<Double>();
+					for (StockDayObject o : dataRaw) {
+						Double v = Double.valueOf(o.adjClose);
+						data.add(v);
+					}
+
+					System.out.println(s+" "+data.size());
+
+					this.closeValues.put(s, data);
+					this.symbols.add(s);
+					this.numberOfDaysInFiles = data.size();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+
 	}
 
 	public void optimize() {
@@ -133,8 +172,10 @@ public class PortfolioOptimization {
 			Moments m = this.factorCalculator.centralMoments(data);
 			this.averageReturns.add(m.mean);
 			this.returnStDev.add(m.sd);
-			this.sharepeRatios.add((m.mean / m.sd) * Math.sqrt(data.size()));
+			Double sharpeRatio = (m.mean / m.sd) * Math.sqrt(data.size());
+			this.sharepeRatios.add(sharpeRatio);
 
+			System.out.println(symbol+" "+dailyRet.size()+" "+m.mean+" "+m.sd+" "+sharpeRatio);
 		}
 
 		Double[] sharpeRatiosArray = new Double[this.sharepeRatios.size()];
@@ -148,6 +189,8 @@ public class PortfolioOptimization {
 		Integer[] sortedSharepeIndiceTopK = Arrays.copyOfRange(
 				sortedSharepeIndice, 0,
 				Math.min(this.TOP_K_EQUITIES, this.symbols.size()));
+		
+		System.out.println(Arrays.toString(sortedSharepeIndiceTopK));
 
 		// Fill covData table
 		Double[][] covData = new Double[sortedSharepeIndiceTopK.length][this.dailyRetSize];
@@ -156,9 +199,10 @@ public class PortfolioOptimization {
 			covData[i] = this.dailyReturns.get(symbol).toArray(
 					new Double[this.dailyRetSize]);
 		}
+		System.out.println("covData");
 
-		//Calculate correlation Matrix for all the combinations
-		//FIXME - maybe need some correction|normalization
+		// Calculate correlation Matrix for all the combinations
+		// FIXME - maybe need some correction|normalization
 		Double[][] covDataTranspose = new Double[this.dailyRetSize][sortedSharepeIndiceTopK.length];
 		for (int x = 0; x < covData.length; x++) {
 			for (int y = 0; y < covData[x].length; y++) {
@@ -178,20 +222,21 @@ public class PortfolioOptimization {
 
 			}
 		}
+		System.out.println("corrMatrix");
 
 		// # Create all possible combinations of the n top equites for the given
 		// portfolio size.
-		this.TOP_K_EQUITIES = 4;
+		
 		List<List<Integer>> portfolios = new LinkedList<List<Integer>>();
-		Integer[] range = new Integer[this.symbols.size()];
+		Integer[] range = new Integer[this.TOP_K_EQUITIES];
 		for (int i = 0; i < range.length; i++) {
 			range[i] = i;
 		}
 		portfolios.addAll(ArrayUtils.combination(Arrays.asList(range),
-				this.TOP_K_EQUITIES));
+				this.PORTFOLIO_SIZE));
 		System.out.println(portfolios);
 
-		//Calculate sum of correlation coeficients for each portfolio
+		// Calculate sum of correlation coeficients for each portfolio
 		Double[] totalSumCorrelation = new Double[portfolios.size()];
 		for (int i = 0; i < portfolios.size(); i++) {
 			List<Integer> p = portfolios.get(i);
@@ -210,7 +255,7 @@ public class PortfolioOptimization {
 			totalSumCorrelation[i] = corrSum;
 		}
 
-		//Find the portfolio with lowest correlation coefficient
+		// Find the portfolio with lowest correlation coefficient
 		Double minCorr = totalSumCorrelation[0];
 		int minIndex = 0;
 		for (int i = 0; i < totalSumCorrelation.length; i++) {
@@ -220,11 +265,12 @@ public class PortfolioOptimization {
 				minIndex = i;
 			}
 		}
+		System.out.println("best");
 
-		//Print result
+		// Print result
 		List<Integer> bestPortfolio = portfolios.get(minIndex);
 		System.out
-				.println("Best portfolio +r=" + totalSumCorrelation[minIndex]);
+				.println("Best portfolio Sum(corr)=" + totalSumCorrelation[minIndex]);
 		for (Integer i : bestPortfolio) {
 			int sortedIndice = sortedSharepeIndice[i];
 			String symbol = this.symbols.get(sortedIndice);
