@@ -122,7 +122,7 @@ public class ArrayUtils {
 			sum += i;
 			sumSq += Math.pow(i, 2);
 		}
-		return ((sumSq - Math.pow(sum, 2)) / x.length);
+		return ((sumSq - Math.pow(sum, 2)/x.length) / (x.length-1));
 	}
 
 	public static ArrayList<Double> fromFloatToDoubleArrayList(List<Float> list) {
