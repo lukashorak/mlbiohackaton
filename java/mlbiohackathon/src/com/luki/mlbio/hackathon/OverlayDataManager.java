@@ -11,11 +11,9 @@ import com.luki.mlbio.hackathon.model.OverlayException;
 public class OverlayDataManager implements IOverlayDataManager{
 	
 	public OverlayDataManager(){
-		
 	}
 	
 	public OverlayDataManager(String stockId) {
-
 		SimpleOverlayDataReader reader = new SimpleOverlayDataReader();
 		this.data.addAll(reader.readOverlayDataPlain(new File(stockId + ".csv")));
 	}
