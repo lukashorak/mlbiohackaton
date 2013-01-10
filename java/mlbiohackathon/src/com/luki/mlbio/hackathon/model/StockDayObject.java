@@ -1,4 +1,5 @@
 package com.luki.mlbio.hackathon.model;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 

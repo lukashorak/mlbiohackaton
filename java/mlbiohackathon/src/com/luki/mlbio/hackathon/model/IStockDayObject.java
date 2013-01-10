@@ -1,7 +1,8 @@
 package com.luki.mlbio.hackathon.model;
+import java.io.Serializable;
 import java.util.Date;
 
-public interface IStockDayObject {
+public interface IStockDayObject extends Serializable{
 
 	public Date getDate();
 

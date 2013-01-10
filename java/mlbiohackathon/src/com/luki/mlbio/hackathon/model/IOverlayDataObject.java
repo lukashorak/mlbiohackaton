@@ -1,5 +1,7 @@
 package com.luki.mlbio.hackathon.model;
 
-public interface IOverlayDataObject {
+import java.io.Serializable;
+
+public interface IOverlayDataObject  extends Serializable{
 
 }
