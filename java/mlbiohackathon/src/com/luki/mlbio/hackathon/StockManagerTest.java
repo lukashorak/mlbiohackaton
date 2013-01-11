@@ -1,4 +1,5 @@
 package com.luki.mlbio.hackathon;
+
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -21,7 +22,8 @@ public class StockManagerTest {
 	@Test
 	public void testGetAll() throws StockException {
 		List<IStockDayObject> data = (List<IStockDayObject>) this.sm.getAll();
-		System.out.println("Data size =" + data.size());
+		System.out.println(TraceHelper.getMethodName(0) + "\tData size ="
+				+ data.size());
 		if (data == null) {
 			fail("Empty data");
 		}
@@ -29,8 +31,10 @@ public class StockManagerTest {
 
 	@Test
 	public void testGetByDuration() throws StockException {
-		List<IStockDayObject> data = (List<IStockDayObject>) this.sm.getByDuration("2012-10-16", "2012-10-17");
-		System.out.println("Data size =" + data.size());
+		List<IStockDayObject> data = (List<IStockDayObject>) this.sm
+				.getByDuration("2012-10-16", "2012-10-17");
+		System.out.println(TraceHelper.getMethodName(0) + "\tData size ="
+				+ data.size());
 		if (data == null) {
 			fail("Empty data");
 		}
@@ -38,8 +42,10 @@ public class StockManagerTest {
 
 	@Test
 	public void testGetByMonth() throws StockException {
-		List<IStockDayObject> data = (List<IStockDayObject>) this.sm.getByMonth("2012","10");
-		System.out.println("Data size =" + data.size());
+		List<IStockDayObject> data = (List<IStockDayObject>) this.sm
+				.getByMonth("2012", "10");
+		System.out.println(TraceHelper.getMethodName(0) + "\tData size ="
+				+ data.size());
 		if (data == null) {
 			fail("Empty data");
 		}
@@ -47,8 +53,32 @@ public class StockManagerTest {
 
 	@Test
 	public void testGetByDate() throws StockException {
-		List<IStockDayObject> data = (List<IStockDayObject>) this.sm.getByDate("2012","10","16");
-		System.out.println("Data size =" + data.size());
+		List<IStockDayObject> data = (List<IStockDayObject>) this.sm.getByDate(
+				"2012", "10", "16");
+		System.out.println(TraceHelper.getMethodName(0) + "\tData size ="
+				+ data.size());
+		if (data == null) {
+			fail("Empty data");
+		}
+	}
+
+	@Test
+	public void testGetAllFromDate() throws StockException {
+		List<IStockDayObject> data = (List<IStockDayObject>) this.sm
+				.getAllFromDate("2012", "10", "16");
+		System.out.println(TraceHelper.getMethodName(0) + "\tData size ="
+				+ data.size());
+		if (data == null) {
+			fail("Empty data");
+		}
+	}
+
+	@Test
+	public void testLastXDays() throws StockException {
+		List<IStockDayObject> data = (List<IStockDayObject>) this.sm
+				.getLastXDays("5");
+		System.out.println(TraceHelper.getMethodName(0) + "\tData size ="
+				+ data.size());
 		if (data == null) {
 			fail("Empty data");
 		}
