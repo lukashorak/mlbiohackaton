@@ -6,8 +6,8 @@ public class StockException extends Exception {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	public StockException(String desc){
+
+	public StockException(String desc) {
 		super(desc);
 	}
 

@@ -1,7 +1,5 @@
 package com.luki.mlbio.hackathon.portfolio;
 
-import static org.junit.Assert.*;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;

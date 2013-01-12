@@ -8,21 +8,29 @@ import com.luki.mlbio.hackathon.model.IOverlayDataManager;
 import com.luki.mlbio.hackathon.model.IOverlayDataObject;
 import com.luki.mlbio.hackathon.model.OverlayException;
 
-public class OverlayDataManager implements IOverlayDataManager{
-	
-	public OverlayDataManager(){
-	}
-	
-	public OverlayDataManager(String stockId) {
-		SimpleOverlayDataReader reader = new SimpleOverlayDataReader();
-		this.data.addAll(reader.readOverlayDataPlain(new File(stockId + ".csv")));
-	}
+public class OverlayDataManager implements IOverlayDataManager {
 
 	private List<IOverlayDataObject> data = new ArrayList<IOverlayDataObject>();
+
+	public OverlayDataManager() {
+	}
+
+	public OverlayDataManager(String stockId) {
+		SimpleOverlayDataReader reader = new SimpleOverlayDataReader();
+		this.data.addAll(reader
+				.readOverlayDataPlain(new File(stockId + ".csv")));
+	}
 
 	@Override
 	public List<? extends IOverlayDataObject> getAll() throws OverlayException {
 		return this.data;
+	}
+
+	@Override
+	public List<? extends IOverlayDataObject> getByDate(String year,
+			String month, String day) throws OverlayException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -35,13 +43,6 @@ public class OverlayDataManager implements IOverlayDataManager{
 	@Override
 	public List<? extends IOverlayDataObject> getByMonth(String year,
 			String month) throws OverlayException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<? extends IOverlayDataObject> getByDate(String year,
-			String month, String day) throws OverlayException {
 		// TODO Auto-generated method stub
 		return null;
 	}

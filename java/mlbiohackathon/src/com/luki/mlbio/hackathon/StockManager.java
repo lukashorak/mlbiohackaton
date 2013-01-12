@@ -16,17 +16,93 @@ import com.luki.mlbio.hackathon.model.StockException;
 
 public class StockManager implements IStockManager {
 
+	private List<IStockDayObject> data = new ArrayList<IStockDayObject>();
+
 	public StockManager(String stockId) {
 
 		SimpleStockReader reader = new SimpleStockReader();
 		this.data.addAll(reader.readStocksPlain(new File(stockId + ".csv")));
 	}
 
-	private List<IStockDayObject> data = new ArrayList<IStockDayObject>();
-
 	@Override
 	public List<? extends IStockDayObject> getAll() throws StockException {
 		return this.data;
+	}
+
+	public List<? extends IStockDayObject> getAllFromDate(Date fromDate)
+			throws StockException {
+		ArrayList<IStockDayObject> returnList = new ArrayList<IStockDayObject>();
+
+		Iterator<IStockDayObject> it = this.data.iterator();
+		while (it.hasNext()) {
+			IStockDayObject o = it.next();
+			if (o.getDate().compareTo(fromDate) <= 0) {
+				returnList.add(o);
+			}
+		}
+
+		return returnList;
+	}
+
+	@Override
+	public List<? extends IStockDayObject> getAllFromDate(String year,
+			String month, String day) throws StockException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = null;
+		try {
+			date = sdf.parse(year + "-" + month + "-" + day);
+		} catch (ParseException e) {
+			throw new StockException("Can't parse date :" + year + "-" + month
+					+ "-" + day);
+		}
+
+		return this.getAllFromDate(date);
+	}
+
+	public List<? extends IStockDayObject> getByDate(Date date)
+			throws StockException {
+		ArrayList<IStockDayObject> returnList = new ArrayList<IStockDayObject>();
+
+		Iterator<IStockDayObject> it = this.data.iterator();
+		while (it.hasNext()) {
+			IStockDayObject o = it.next();
+			if (o.getDate().compareTo(date) == 0) {
+				returnList.add(o);
+			}
+		}
+
+		return returnList;
+	}
+
+	@Override
+	public List<? extends IStockDayObject> getByDate(String year, String month,
+			String day) throws StockException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = null;
+		try {
+			date = sdf.parse(year + "-" + month + "-" + day);
+		} catch (ParseException e) {
+			throw new StockException("Can't parse date :" + year + "-" + month
+					+ "-" + day);
+		}
+
+		return this.getByDate(date);
+	}
+
+	public List<? extends IStockDayObject> getByDuration(Date startDate,
+			Date endDate) throws StockException {
+		ArrayList<IStockDayObject> returnList = new ArrayList<IStockDayObject>();
+
+		Iterator<IStockDayObject> it = this.data.iterator();
+		while (it.hasNext()) {
+			IStockDayObject o = it.next();
+			if (o.getDate().compareTo(startDate) >= 0
+					&& o.getDate().compareTo(endDate) <= 0) {
+				returnList.add(o);
+			}
+		}
+
+		return returnList;
 	}
 
 	@Override
@@ -47,36 +123,6 @@ public class StockManager implements IStockManager {
 		}
 
 		return this.getByDuration(startDate, endDate);
-	}
-
-	public List<? extends IStockDayObject> getByDuration(Date startDate,
-			Date endDate) throws StockException {
-		ArrayList<IStockDayObject> returnList = new ArrayList<IStockDayObject>();
-
-		Iterator<IStockDayObject> it = this.data.iterator();
-		while (it.hasNext()) {
-			IStockDayObject o = it.next();
-			if (o.getDate().compareTo(startDate) >= 0
-					&& o.getDate().compareTo(endDate) <= 0) {
-				returnList.add(o);
-			}
-		}
-
-		return returnList;
-	}
-
-	@Override
-	public List<? extends IStockDayObject> getByMonth(String year, String month)
-			throws StockException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
-		Date date = null;
-		try {
-			date = sdf.parse(year + "-" + month);
-		} catch (ParseException e) {
-			throw new StockException("Can't parse date :" + year + "-" + month);
-		}
-
-		return this.getByMonth(date);
 	}
 
 	public List<? extends IStockDayObject> getByMonth(Date date)
@@ -100,61 +146,29 @@ public class StockManager implements IStockManager {
 	}
 
 	@Override
-	public List<? extends IStockDayObject> getByDate(String year, String month,
-			String day) throws StockException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	public List<? extends IStockDayObject> getByMonth(String year, String month)
+			throws StockException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
 		Date date = null;
 		try {
-			date = sdf.parse(year + "-" + month + "-" + day);
+			date = sdf.parse(year + "-" + month);
 		} catch (ParseException e) {
-			throw new StockException("Can't parse date :" + year + "-" + month
-					+ "-" + day);
+			throw new StockException("Can't parse date :" + year + "-" + month);
 		}
 
-		return this.getByDate(date);
+		return this.getByMonth(date);
 	}
 
-	public List<? extends IStockDayObject> getByDate(Date date)
+	public List<? extends IStockDayObject> getLastXDays(Integer days)
 			throws StockException {
+		ArrayList<IStockDayObject> orderedList = new ArrayList<IStockDayObject>();
+
+		orderedList.addAll(this.data);
+		Collections.sort(orderedList, new StockDayDateComparator());
+
 		ArrayList<IStockDayObject> returnList = new ArrayList<IStockDayObject>();
-
-		Iterator<IStockDayObject> it = this.data.iterator();
-		while (it.hasNext()) {
-			IStockDayObject o = it.next();
-			if (o.getDate().compareTo(date) == 0) {
-				returnList.add(o);
-			}
-		}
-
-		return returnList;
-	}
-
-	@Override
-	public List<? extends IStockDayObject> getAllFromDate(String year,
-			String month, String day) throws StockException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date date = null;
-		try {
-			date = sdf.parse(year + "-" + month + "-" + day);
-		} catch (ParseException e) {
-			throw new StockException("Can't parse date :" + year + "-" + month
-					+ "-" + day);
-		}
-
-		return this.getAllFromDate(date);
-	}
-
-	public List<? extends IStockDayObject> getAllFromDate(Date fromDate)
-			throws StockException {
-		ArrayList<IStockDayObject> returnList = new ArrayList<IStockDayObject>();
-
-		Iterator<IStockDayObject> it = this.data.iterator();
-		while (it.hasNext()) {
-			IStockDayObject o = it.next();
-			if (o.getDate().compareTo(fromDate) <= 0) {
-				returnList.add(o);
-			}
-		}
+		returnList.addAll(orderedList.subList(0,
+				Math.min(days, orderedList.size())));
 
 		return returnList;
 	}
@@ -170,19 +184,5 @@ public class StockManager implements IStockManager {
 		}
 
 		return this.getLastXDays(dayCount);
-	}
-
-	public List<? extends IStockDayObject> getLastXDays(Integer days)
-			throws StockException {
-		ArrayList<IStockDayObject> orderedList = new ArrayList<IStockDayObject>();
-
-		orderedList.addAll(this.data);
-		Collections.sort(orderedList, new StockDayDateComparator());
-
-		ArrayList<IStockDayObject> returnList = new ArrayList<IStockDayObject>();
-		returnList.addAll(orderedList.subList(0,
-				Math.min(days, orderedList.size())));
-
-		return returnList;
 	}
 }

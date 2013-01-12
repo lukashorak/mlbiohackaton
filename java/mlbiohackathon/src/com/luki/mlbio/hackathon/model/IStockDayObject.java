@@ -1,37 +1,36 @@
 package com.luki.mlbio.hackathon.model;
+
 import java.io.Serializable;
 import java.util.Date;
 
-public interface IStockDayObject extends Serializable{
-
-	public Date getDate();
-
-	public void setDate(Date date);
-
-	public String getLow();
-
-	public void setLow(String low);
-
-	public String getHigh();
-
-	public void setHigh(String high);
-
-	public String getOpen();
-
-	public void setOpen(String open);
-
-	public String getClose();
-
-	public void setClose(String close);
+public interface IStockDayObject extends Serializable {
 
 	public String getAdjClose();
 
-	public void setAdjClose(String adjClose);
-	
+	public String getClose();
+
+	public Date getDate();
+
+	public String getHigh();
+
+	public String getLow();
+
+	public String getOpen();
+
 	public String getVolume();
 
+	public void setAdjClose(String adjClose);
+
+	public void setClose(String close);
+
+	public void setDate(Date date);
+
+	public void setHigh(String high);
+
+	public void setLow(String low);
+
+	public void setOpen(String open);
+
 	public void setVolume(String volume);
-	
-		
 
 }

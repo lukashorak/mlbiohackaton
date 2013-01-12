@@ -6,13 +6,10 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-
-import org.apache.commons.math3.stat.correlation.Covariance;
 
 import com.luki.mlbio.hackathon.StockManager;
 import com.luki.mlbio.hackathon.model.StockDayObject;
@@ -31,17 +28,18 @@ import com.luki.mlbio.hackathon.model.StockException;
  */
 public class PortfolioOptimization {
 
-	public PortfolioOptimization() {
+	/**
+	 * @param args
+	 * @throws StockException
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		PortfolioOptimization p = new PortfolioOptimization();
+		File dir = new File("c:\\PROG\\ml\\data2\\");
+		p.readFromDir(dir);
+		// p.fillData();
+		p.optimize();
 
-	}
-
-	public PortfolioOptimization(Integer portfolioSize, Integer topK) {
-		if (portfolioSize != null) {
-			this.PORTFOLIO_SIZE = portfolioSize;
-		}
-		if (topK != null) {
-			this.TOP_K_EQUITIES = topK;
-		}
 	}
 
 	// Portfolio size is the number of instruments included in our 'best
@@ -53,8 +51,8 @@ public class PortfolioOptimization {
 	private int TOP_K_EQUITIES = 10;
 
 	private ArrayList<File> files = new ArrayList<File>();
-	private ArrayList<String> symbols = new ArrayList<String>();
 
+	private ArrayList<String> symbols = new ArrayList<String>();
 	private int numberOfDaysInFiles = 10;
 
 	// # Creates a 'record array', which is like a spreadsheet with a header.
@@ -69,30 +67,30 @@ public class PortfolioOptimization {
 	// daily_ret = np.recarray((datalength-1,), dtype=[(symbol, 'float') for
 	// symbol in symbols])
 	private HashMap<String, ArrayList<Double>> dailyReturns = new HashMap<String, ArrayList<Double>>(); // closeValues.length()-1
-	private int dailyRetSize = 0;
 
+	private int dailyRetSize = 0;
 	private ArrayList<Double> averageReturns = new ArrayList<Double>();
+
 	private ArrayList<Double> returnStDev = new ArrayList<Double>();
 	private ArrayList<Double> sharepeRatios = new ArrayList<Double>();
 	private HashMap<String, ArrayList<Double>> cummulativeReturns = new HashMap<String, ArrayList<Double>>(); // closeValues.length()-1
-
 	private Double[][] corrMatrix = new Double[TOP_K_EQUITIES][TOP_K_EQUITIES];
 
 	private FactorCalculator factorCalculator = new FactorCalculator();
+
 	private DecimalFormat df = new DecimalFormat("#.##");
 
-	/**
-	 * @param args
-	 * @throws StockException
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		PortfolioOptimization p = new PortfolioOptimization();
-		File dir = new File("c:\\PROG\\ml\\data2\\");
-		p.readFromDir(dir);
-		// p.fillData();
-		p.optimize();
+	public PortfolioOptimization() {
 
+	}
+
+	public PortfolioOptimization(Integer portfolioSize, Integer topK) {
+		if (portfolioSize != null) {
+			this.PORTFOLIO_SIZE = portfolioSize;
+		}
+		if (topK != null) {
+			this.TOP_K_EQUITIES = topK;
+		}
 	}
 
 	public void fillData() {
@@ -121,45 +119,6 @@ public class PortfolioOptimization {
 				ex.printStackTrace();
 			}
 		}
-	}
-
-	public void readFromDir(File dir) {
-		if (dir.isDirectory()) {
-			FilenameFilter filter = new FilenameFilter() {
-				public boolean accept(File directory, String fileName) {
-					return fileName.endsWith(".csv");
-				}
-			};
-			File[] files = dir.listFiles(filter);
-
-			for (File f : files) {
-
-				try {
-					String s = f.getName().replace(".csv", "");
-					StockManager sm = new StockManager(f.getCanonicalPath()
-							.replace(".csv", ""));
-
-					List<StockDayObject> dataRaw = (List<StockDayObject>) sm
-							.getAll();
-					ArrayList<Double> data = new ArrayList<Double>();
-					for (StockDayObject o : dataRaw) {
-						Double v = Double.valueOf(o.adjClose);
-						data.add(v);
-					}
-
-					System.out.println(s + " " + data.size());
-
-					ArrayList<Double> dataShort = new ArrayList<Double>();
-					dataShort.addAll(data.subList(0, 50));
-					this.closeValues.put(s, dataShort);
-					this.symbols.add(s);
-					this.numberOfDaysInFiles = dataShort.size();
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		}
-
 	}
 
 	public List<OptimizedStock> optimize() {
@@ -313,14 +272,54 @@ public class PortfolioOptimization {
 	}
 
 	public void printResult(List<OptimizedStock> result) {
-		System.out.println("symbol" + "\t" + "sharpe"
-				+ "\t" + "avgRet" + "\t" + "retStdev");
+		System.out.println("symbol" + "\t" + "sharpe" + "\t" + "avgRet" + "\t"
+				+ "retStdev");
 		for (OptimizedStock o : result) {
 			System.out.println(o.getSymbol() + "\t"
 					+ df.format(o.getSharpeRatio()) + "\t"
 					+ df.format(o.getAvgReturn()) + "\t"
 					+ df.format(o.getReturnStdev()));
 		}
+	}
+
+	public void readFromDir(File dir) {
+		if (dir.isDirectory()) {
+			FilenameFilter filter = new FilenameFilter() {
+				@Override
+				public boolean accept(File directory, String fileName) {
+					return fileName.endsWith(".csv");
+				}
+			};
+			File[] files = dir.listFiles(filter);
+
+			for (File f : files) {
+
+				try {
+					String s = f.getName().replace(".csv", "");
+					StockManager sm = new StockManager(f.getCanonicalPath()
+							.replace(".csv", ""));
+
+					List<StockDayObject> dataRaw = (List<StockDayObject>) sm
+							.getAll();
+					ArrayList<Double> data = new ArrayList<Double>();
+					for (StockDayObject o : dataRaw) {
+						Double v = Double.valueOf(o.adjClose);
+						data.add(v);
+					}
+
+					System.out.println(s + " " + data.size());
+
+					ArrayList<Double> dataShort = new ArrayList<Double>();
+					dataShort.addAll(data.subList(0, 50));
+					this.closeValues.put(s, dataShort);
+					this.symbols.add(s);
+					this.numberOfDaysInFiles = dataShort.size();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		}
+
 	}
 
 }

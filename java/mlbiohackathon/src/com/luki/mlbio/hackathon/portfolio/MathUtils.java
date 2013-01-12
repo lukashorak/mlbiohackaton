@@ -5,21 +5,6 @@ import java.util.Collections;
 
 public class MathUtils {
 
-	@Deprecated
-	public static Double degToRad(Double d) {
-		return (d * Math.PI / 180);
-	}
-
-	public static Double vectorNorm(ArrayList<Double> vector) {
-		Double sumSqElement = 0D;
-
-		for (Double e : vector) {
-			sumSqElement += Math.pow(e, 2);
-		}
-		Double norm = Math.sqrt(sumSqElement);
-		return norm;
-	}
-
 	public static Double correlationCoefficient(ArrayList<Double> x,
 			ArrayList<Double> y) {
 
@@ -48,6 +33,11 @@ public class MathUtils {
 						* sumSqY - Math.pow(sumY, 2)));
 		return corr;
 
+	}
+
+	@Deprecated
+	public static Double degToRad(Double d) {
+		return (d * Math.PI / 180);
 	}
 
 	public static Integer[] histogramCount(ArrayList<Double> x) {
@@ -88,6 +78,16 @@ public class MathUtils {
 		}
 
 		return hist;
+	}
+
+	public static Double vectorNorm(ArrayList<Double> vector) {
+		Double sumSqElement = 0D;
+
+		for (Double e : vector) {
+			sumSqElement += Math.pow(e, 2);
+		}
+		Double norm = Math.sqrt(sumSqElement);
+		return norm;
 	}
 
 }

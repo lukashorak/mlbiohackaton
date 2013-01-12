@@ -1,12 +1,8 @@
 package com.luki.mlbio.hackathon.portfolio;
 
 import java.io.File;
-import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 
-import com.luki.mlbio.hackathon.StockManager;
-import com.luki.mlbio.hackathon.model.IStockDayObject;
 import com.luki.mlbio.hackathon.model.StockException;
 
 public class Main {
@@ -19,7 +15,7 @@ public class Main {
 
 		Main m = new Main();
 		try {
-			String[] arg2 = {"c:\\PROG\\ml\\data2\\","20","5"};
+			String[] arg2 = { "c:\\PROG\\ml\\data2\\", "20", "5" };
 			m.run(arg2);
 		} catch (StockException e) {
 			e.printStackTrace();

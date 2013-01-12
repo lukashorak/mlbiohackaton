@@ -1,6 +1,6 @@
 package com.luki.mlbio.hackathon.portfolio;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 

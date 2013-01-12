@@ -11,186 +11,53 @@ public class FactorCalculator {
 	}
 
 	/**
-	 * Calculate Sum(x)
+	 * Calculate Average Absolute Difference - AAD = sum(abs(x_i -
+	 * x_(i-1))/(n-1)
 	 * 
 	 * @param x
 	 * @return
 	 */
-	public Double sum(List<Double> x) {
-		Double sum = 0D;
-		for (Double x_i : x) {
-			sum += x_i;
-		}
-		return sum;
-	}
-
-	/**
-	 * Calculate Mean(x) = sum(x)/n
-	 * 
-	 * @param x
-	 * @return
-	 */
-	public Double mean(List<Double> x) {
-
-		Double ret = this.sum(x);
-		if (x.size() > 0) {
-			ret = ret / x.size();
-		}
-		return ret;
-
-	}
-
-	/**
-	 * Calculate central moments in single loop
-	 * source:http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
-	 * 
-	 * @param data
-	 * @return
-	 */
-	public Moments centralMoments(List<Double> data) {
-		Integer n = 0;
-		Double mean = 0D;
-		Double M2 = 0D;
-		Double M3 = 0D;
-		Double M4 = 0D;
-
-		for (Double x : data) {
-			Integer n1 = n;
-			n = n + 1;
-			Double delta = x - mean;
-			Double delta_n = delta / n;
-			Double delta_n2 = delta_n * delta_n;
-			Double term1 = delta * delta_n * n1;
-			mean = mean + delta_n;
-			M4 = M4 + term1 * delta_n2 * (n * n - 3 * n + 3) + 6 * delta_n2
-					* M2 - 4 * delta_n * M3;
-			M3 = M3 + term1 * delta_n * (n - 2) - 3 * delta_n * M2;
-			M2 = M2 + term1;
-		}
-
-		Moments ret = new Moments();
-		ret.mean = mean;
-		ret.variance = M2 / (n - 1);
-		ret.variance_n = M2 / n;
-		ret.sd = Math.sqrt(M2 / (n - 1));
-		ret.sd_n = Math.sqrt(M2 / n);
-		ret.skewness = (Math.sqrt(n) * M3) / (Math.pow(M2, 3D / 2D));
-		ret.kurtosis = (n * M4) / (M2 * M2) - 3D;
-
-		return ret;
-	}
-
-	/**
-	 * Calculate covaraince in two pass
-	 * 
-	 * @param x
-	 * @param y
-	 * @return
-	 */
-	public Double covariance(List<Double> x, List<Double> y) {
-		Double meanX = this.mean(x);
-		Double meanY = this.mean(y);
-
-		return this.covariance(x, y, meanX, meanY);
-	}
-
-	/**
-	 * Calculate covariance in single pass with mean(X) and mean(Y) provided
-	 * 
-	 * @param x
-	 * @param y
-	 * @param meanX
-	 * @param meanY
-	 * @return
-	 */
-	public Double covariance(List<Double> x, List<Double> y, Double meanX,
-			Double meanY) {
-
-		if (x.size() != y.size()) {
-			// throw new RuntimeException("size(x) != size(y)");
+	public Double averageAbsoluteDifference(List<Double> x) {
+		if (x.size() == 0) {
 			return null;
 		}
-		Double covariance = 0D;
+
+		Double AAD = 0D;
+		Integer n = x.size();
+
+		Double x_im1 = x.get(0);
+		for (int i = 1; i < n; i++) {
+			Double x_i = x.get(i);
+			Double absDifference = Math.abs(x_i - x_im1);
+
+			AAD += absDifference / (n - 1);
+		}
+
+		return AAD;
+	}
+
+	/**
+	 * Calculate Average Absolute Value - AAV = sum(abs(x_i)) / n
+	 * 
+	 * @param x
+	 * @return
+	 */
+	public Double averageAbsoluteValue(List<Double> x) {
+		if (x.size() == 0) {
+			return null;
+		}
+
+		Double avgAbs = 0D;
 		Integer n = x.size();
 
 		for (int i = 0; i < n; i++) {
-			Double a = x.get(i) - meanX;
-			Double b = y.get(i) - meanY;
-			covariance += (a * b) / n;
+			Double x_i = Math.abs(x.get(i));
+
+			avgAbs += x_i / n;
 		}
 
-		return covariance;
+		return avgAbs;
 	}
-
-	/**
-	 * Calculate correlation coefficient corr(X,Y) = cov(X,Y)/(sd(X)*sd(Y))
-	 * 
-	 * @param covXY
-	 * @param sdX
-	 * @param sdY
-	 * @return
-	 */
-	public Double correlation(Double covXY, Double sdX, Double sdY) {
-		Double correlation = covXY / (sdX * sdY);
-		return correlation;
-	}
-
-	/**
-	 * Calculate ZCR - Number of elements crossing zero
-	 * 
-	 * @param x
-	 * @return
-	 * @deprecated
-	 * @see #crossingRates
-	 */
-	@Deprecated
-	public Integer zeroCrossingRate(List<Double> x) {
-		Integer ZCR = 0;
-
-		if (x.size() <= 2) {
-			return null;
-		}
-
-		Double x_im1 = x.get(0);
-		for (int i = 1; i < x.size(); i++) {
-			Double x_i = x.get(i);
-			if ((x_i > 0 && x_im1 < 0) || (x_i < 0 && x_im1 > 0)) {
-				ZCR++;
-			}
-		}
-
-		return ZCR;
-	}
-
-	/**
-	 * Calculate MCR - Number of elements crossing mean
-	 * 
-	 * @param x
-	 * @param meanX
-	 * @return
-	 * @deprecated
-	 * @see #crossingRates
-	 */
-	@Deprecated
-	public Integer meanCrossingRate(List<Double> x, Double meanX) {
-		Integer MCR = 0;
-
-		if (x.size() <= 2) {
-			return null;
-		}
-
-		Double x_im1 = x.get(0);
-		for (int i = 1; i < x.size(); i++) {
-			Double x_i = x.get(i);
-			if ((x_i > meanX && x_im1 < meanX)
-					|| (x_i < meanX && x_im1 > meanX)) {
-				MCR++;
-			}
-		}
-
-		return MCR;
-	}
-
 
 	/**
 	 * Calculate Average Resultant Acceleration - ARA =
@@ -217,31 +84,6 @@ public class FactorCalculator {
 		}
 
 		return ARA;
-	}
-
-	/**
-	 * Calculate magnitude = sum(sqrt(x_i^2 + y_i^2 + z_i^2))
-	 * 
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @return
-	 */
-	public Double magnitude(List<Double> x, List<Double> y, List<Double> z) {
-
-		if (!((x.size() == y.size()) && (x.size() == z.size()))) {
-			return null;
-		}
-		Integer n = x.size();
-		Double magnitude = 0D;
-
-		for (int i = 0; i < n; i++) {
-			Double element = Math.sqrt(Math.pow(x.get(i), 2)
-					+ Math.pow(x.get(i), 2) + Math.pow(x.get(i), 2));
-			magnitude += element;
-		}
-
-		return magnitude;
 	}
 
 	/**
@@ -302,52 +144,168 @@ public class FactorCalculator {
 	}
 
 	/**
-	 * Calculate Average Absolute Difference - AAD = sum(abs(x_i -
-	 * x_(i-1))/(n-1)
+	 * Calculate central moments in single loop
+	 * source:http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
 	 * 
-	 * @param x
+	 * @param data
 	 * @return
 	 */
-	public Double averageAbsoluteDifference(List<Double> x) {
-		if (x.size() == 0) {
-			return null;
+	public Moments centralMoments(List<Double> data) {
+		Integer n = 0;
+		Double mean = 0D;
+		Double M2 = 0D;
+		Double M3 = 0D;
+		Double M4 = 0D;
+
+		for (Double x : data) {
+			Integer n1 = n;
+			n = n + 1;
+			Double delta = x - mean;
+			Double delta_n = delta / n;
+			Double delta_n2 = delta_n * delta_n;
+			Double term1 = delta * delta_n * n1;
+			mean = mean + delta_n;
+			M4 = M4 + term1 * delta_n2 * (n * n - 3 * n + 3) + 6 * delta_n2
+					* M2 - 4 * delta_n * M3;
+			M3 = M3 + term1 * delta_n * (n - 2) - 3 * delta_n * M2;
+			M2 = M2 + term1;
 		}
 
-		Double AAD = 0D;
-		Integer n = x.size();
+		Moments ret = new Moments();
+		ret.mean = mean;
+		ret.variance = M2 / (n - 1);
+		ret.variance_n = M2 / n;
+		ret.sd = Math.sqrt(M2 / (n - 1));
+		ret.sd_n = Math.sqrt(M2 / n);
+		ret.skewness = (Math.sqrt(n) * M3) / (Math.pow(M2, 3D / 2D));
+		ret.kurtosis = (n * M4) / (M2 * M2) - 3D;
 
-		Double x_im1 = x.get(0);
-		for (int i = 1; i < n; i++) {
-			Double x_i = x.get(i);
-			Double absDifference = Math.abs(x_i - x_im1);
-
-			AAD += absDifference / (n - 1);
-		}
-
-		return AAD;
+		return ret;
 	}
 
 	/**
-	 * Calculate Average Absolute Value - AAV = sum(abs(x_i)) / n
+	 * Calculate correlation coefficient corr(X,Y) = cov(X,Y)/(sd(X)*sd(Y))
+	 * 
+	 * @param covXY
+	 * @param sdX
+	 * @param sdY
+	 * @return
+	 */
+	public Double correlation(Double covXY, Double sdX, Double sdY) {
+		Double correlation = covXY / (sdX * sdY);
+		return correlation;
+	}
+
+	/**
+	 * Calculate covaraince in two pass
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public Double covariance(List<Double> x, List<Double> y) {
+		Double meanX = this.mean(x);
+		Double meanY = this.mean(y);
+
+		return this.covariance(x, y, meanX, meanY);
+	}
+
+	/**
+	 * Calculate covariance in single pass with mean(X) and mean(Y) provided
+	 * 
+	 * @param x
+	 * @param y
+	 * @param meanX
+	 * @param meanY
+	 * @return
+	 */
+	public Double covariance(List<Double> x, List<Double> y, Double meanX,
+			Double meanY) {
+
+		if (x.size() != y.size()) {
+			// throw new RuntimeException("size(x) != size(y)");
+			return null;
+		}
+		Double covariance = 0D;
+		Integer n = x.size();
+
+		for (int i = 0; i < n; i++) {
+			Double a = x.get(i) - meanX;
+			Double b = y.get(i) - meanY;
+			covariance += (a * b) / n;
+		}
+
+		return covariance;
+	}
+
+	/**
+	 * Calculate magnitude = sum(sqrt(x_i^2 + y_i^2 + z_i^2))
+	 * 
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @return
+	 */
+	public Double magnitude(List<Double> x, List<Double> y, List<Double> z) {
+
+		if (!((x.size() == y.size()) && (x.size() == z.size()))) {
+			return null;
+		}
+		Integer n = x.size();
+		Double magnitude = 0D;
+
+		for (int i = 0; i < n; i++) {
+			Double element = Math.sqrt(Math.pow(x.get(i), 2)
+					+ Math.pow(x.get(i), 2) + Math.pow(x.get(i), 2));
+			magnitude += element;
+		}
+
+		return magnitude;
+	}
+
+	/**
+	 * Calculate Mean(x) = sum(x)/n
 	 * 
 	 * @param x
 	 * @return
 	 */
-	public Double averageAbsoluteValue(List<Double> x) {
-		if (x.size() == 0) {
+	public Double mean(List<Double> x) {
+
+		Double ret = this.sum(x);
+		if (x.size() > 0) {
+			ret = ret / x.size();
+		}
+		return ret;
+
+	}
+
+	/**
+	 * Calculate MCR - Number of elements crossing mean
+	 * 
+	 * @param x
+	 * @param meanX
+	 * @return
+	 * @deprecated
+	 * @see #crossingRates
+	 */
+	@Deprecated
+	public Integer meanCrossingRate(List<Double> x, Double meanX) {
+		Integer MCR = 0;
+
+		if (x.size() <= 2) {
 			return null;
 		}
 
-		Double avgAbs = 0D;
-		Integer n = x.size();
-
-		for (int i = 0; i < n; i++) {
-			Double x_i = Math.abs(x.get(i));
-
-			avgAbs += x_i / n;
+		Double x_im1 = x.get(0);
+		for (int i = 1; i < x.size(); i++) {
+			Double x_i = x.get(i);
+			if ((x_i > meanX && x_im1 < meanX)
+					|| (x_i < meanX && x_im1 > meanX)) {
+				MCR++;
+			}
 		}
 
-		return avgAbs;
+		return MCR;
 	}
 
 	/**
@@ -374,6 +332,47 @@ public class FactorCalculator {
 
 		return rms;
 
+	}
+
+	/**
+	 * Calculate Sum(x)
+	 * 
+	 * @param x
+	 * @return
+	 */
+	public Double sum(List<Double> x) {
+		Double sum = 0D;
+		for (Double x_i : x) {
+			sum += x_i;
+		}
+		return sum;
+	}
+
+	/**
+	 * Calculate ZCR - Number of elements crossing zero
+	 * 
+	 * @param x
+	 * @return
+	 * @deprecated
+	 * @see #crossingRates
+	 */
+	@Deprecated
+	public Integer zeroCrossingRate(List<Double> x) {
+		Integer ZCR = 0;
+
+		if (x.size() <= 2) {
+			return null;
+		}
+
+		Double x_im1 = x.get(0);
+		for (int i = 1; i < x.size(); i++) {
+			Double x_i = x.get(i);
+			if ((x_i > 0 && x_im1 < 0) || (x_i < 0 && x_im1 > 0)) {
+				ZCR++;
+			}
+		}
+
+		return ZCR;
 	}
 
 }
