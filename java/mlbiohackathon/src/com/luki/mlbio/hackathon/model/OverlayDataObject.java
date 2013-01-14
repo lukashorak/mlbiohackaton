@@ -12,6 +12,11 @@ public class OverlayDataObject implements IOverlayDataObject {
 	private static final long serialVersionUID = 1L;
 	public String tick;
 	public Date date;
+	public Map<String, String> data = new LinkedHashMap<String, String>();
+	
+	public OverlayDataObject() {
+
+	}
 
 	public String getTick() {
 		return tick;
@@ -29,8 +34,6 @@ public class OverlayDataObject implements IOverlayDataObject {
 		this.date = date;
 	}
 
-	public Map<String, String> data = new LinkedHashMap<String, String>();
-
 	public Map<String, String> getData() {
 		return data;
 	}
@@ -39,8 +42,6 @@ public class OverlayDataObject implements IOverlayDataObject {
 		this.data = data;
 	}
 
-	public OverlayDataObject() {
-
-	}
+	
 
 }

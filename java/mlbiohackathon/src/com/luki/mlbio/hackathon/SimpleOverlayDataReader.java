@@ -48,14 +48,14 @@ public class SimpleOverlayDataReader {
 				throw new Exception("Header have no data");
 			}
 
-			System.out.println("Header Keys:");
+//			System.out.println("Header Keys:");
 			List<String> headerKeys = new ArrayList<String>();
 			for (int i = 2; i < headerKeyCount; i++) {
 				headerKeys.add(headerVal[i]);
-				System.out.println(headerVal[i]);
+//				System.out.println(headerVal[i]);
 			}
 
-			System.out.println("Data");
+//			System.out.println("Data");
 			SimpleDateFormat sdfMonth = new SimpleDateFormat("yyyy-MM");
 
 			while ((strLine = br.readLine()) != null) {
@@ -74,7 +74,7 @@ public class SimpleOverlayDataReader {
 							String tick = val[1];
 							Date dateParsed = sdfMonth.parse(dateString);
 
-							System.out.print(tick + "\t" + dateParsed + "\t");
+//							System.out.print(tick + "\t" + dateParsed + "\t");
 
 							HashMap<String, String> dataItemMap = new HashMap<String, String>();
 							for (int i = 2; i < headerKeyCount; i++) {
@@ -83,13 +83,15 @@ public class SimpleOverlayDataReader {
 								String value = val[i];
 
 								dataItemMap.put(key, value);
-								System.out.print(key + ":" + value + " ");
+//								System.out.print(key + ":" + value + " ");
 							}
 
 							OverlayDataObject overlayDataObject = new OverlayDataObject();
+							overlayDataObject.tick = tick;
+							overlayDataObject.date = dateParsed;
 							overlayDataObject.data = dataItemMap;
 
-							System.out.println();
+//							System.out.println();
 
 							List<IOverlayDataObject> dataList = null;
 							if (stockDataMap.containsKey(tick)) {
@@ -117,14 +119,14 @@ public class SimpleOverlayDataReader {
 			e.printStackTrace();
 		}
 
-		System.out.println("Summary");
-		System.out.println("Size of stockDataMap:" + stockDataMap.size());
+//		System.out.println("Summary");
+//		System.out.println("Size of stockDataMap:" + stockDataMap.size());
 		Iterator<Entry<String, List<IOverlayDataObject>>> it = stockDataMap
 				.entrySet().iterator();
 		while (it.hasNext()) {
 			Entry<String, List<IOverlayDataObject>> e = it.next();
 			String key = e.getKey();
-			System.out.println(key+"\t" + e.getValue().size());
+//			System.out.println(key + "\t" + e.getValue().size());
 		}
 		return stockDataMap;
 	}
