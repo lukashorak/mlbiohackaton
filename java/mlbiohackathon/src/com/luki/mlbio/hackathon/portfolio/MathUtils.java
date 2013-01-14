@@ -51,7 +51,7 @@ public class MathUtils {
 		Double min = Collections.min(x);
 		Double max = Collections.max(x);
 
-		Double h = (max - min) / n;
+		// Double h = (max - min) / n;
 		// FIXME - min==max ???
 		// FIXME - n==0 || n==1 ???
 		double[] steps = ArrayUtils.linspace(min, max, n - 1);

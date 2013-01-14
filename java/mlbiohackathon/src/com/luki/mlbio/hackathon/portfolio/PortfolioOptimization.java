@@ -50,7 +50,7 @@ public class PortfolioOptimization {
 	// for cross-correlation
 	private int TOP_K_EQUITIES = 10;
 
-	private ArrayList<File> files = new ArrayList<File>();
+//	private ArrayList<File> files = new ArrayList<File>();
 
 	private ArrayList<String> symbols = new ArrayList<String>();
 	private int numberOfDaysInFiles = 10;
@@ -73,8 +73,8 @@ public class PortfolioOptimization {
 
 	private ArrayList<Double> returnStDev = new ArrayList<Double>();
 	private ArrayList<Double> sharepeRatios = new ArrayList<Double>();
-	private HashMap<String, ArrayList<Double>> cummulativeReturns = new HashMap<String, ArrayList<Double>>(); // closeValues.length()-1
-	private Double[][] corrMatrix = new Double[TOP_K_EQUITIES][TOP_K_EQUITIES];
+//	private HashMap<String, ArrayList<Double>> cummulativeReturns = new HashMap<String, ArrayList<Double>>(); // closeValues.length()-1
+//	private Double[][] corrMatrix = new Double[TOP_K_EQUITIES][TOP_K_EQUITIES];
 
 	private FactorCalculator factorCalculator = new FactorCalculator();
 
@@ -100,6 +100,7 @@ public class PortfolioOptimization {
 		for (String s : stocks) {
 			StockManager sm = new StockManager(s);
 			try {
+				@SuppressWarnings("unchecked")
 				List<StockDayObject> dataRaw = (List<StockDayObject>) sm
 						.getAll();
 				ArrayList<Double> data = new ArrayList<Double>();
@@ -299,6 +300,7 @@ public class PortfolioOptimization {
 					StockManager sm = new StockManager(f.getCanonicalPath()
 							.replace(".csv", ""));
 
+					@SuppressWarnings("unchecked")
 					List<StockDayObject> dataRaw = (List<StockDayObject>) sm
 							.getAll();
 					ArrayList<Double> data = new ArrayList<Double>();

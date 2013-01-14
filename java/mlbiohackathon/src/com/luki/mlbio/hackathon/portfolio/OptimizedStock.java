@@ -4,6 +4,11 @@ import java.io.Serializable;
 
 public class OptimizedStock implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private String symbol;
 
 	private Double sharpeRatio;

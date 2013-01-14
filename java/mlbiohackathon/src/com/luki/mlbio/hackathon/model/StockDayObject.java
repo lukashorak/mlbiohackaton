@@ -5,6 +5,11 @@ import java.util.Date;
 
 public class StockDayObject implements IStockDayObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public String tick;
 
 	public Date date;

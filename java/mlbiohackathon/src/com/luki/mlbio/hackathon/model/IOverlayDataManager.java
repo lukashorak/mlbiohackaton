@@ -5,15 +5,9 @@ import java.util.List;
 
 public interface IOverlayDataManager extends Serializable {
 
-	public List<? extends IOverlayDataObject> getAll() throws OverlayException;
+	public List<? extends IOverlayDataObject> getAll(String stock) throws OverlayException;
 
-	public List<? extends IOverlayDataObject> getByDate(String year,
-			String month, String day) throws OverlayException;
-
-	public List<? extends IOverlayDataObject> getByDuration(String start,
-			String end) throws OverlayException;
-
-	public List<? extends IOverlayDataObject> getByMonth(String year,
-			String month) throws OverlayException;
+	public IOverlayDataObject getByDate(String stock, String year, String month,
+			String day) throws OverlayException;
 
 }

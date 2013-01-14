@@ -1,8 +1,10 @@
 package com.luki.mlbio.hackathon;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.luki.mlbio.hackathon.model.IOverlayDataManager;
 import com.luki.mlbio.hackathon.model.IOverlayDataObject;
@@ -10,39 +12,35 @@ import com.luki.mlbio.hackathon.model.OverlayException;
 
 public class OverlayDataManager implements IOverlayDataManager {
 
-	private List<IOverlayDataObject> data = new ArrayList<IOverlayDataObject>();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Map<String, List<IOverlayDataObject>> data = new LinkedHashMap<String, List<IOverlayDataObject>>();
 
 	public OverlayDataManager() {
 	}
 
-	public OverlayDataManager(String stockId) {
+	public OverlayDataManager(String overlayFile) {
 		SimpleOverlayDataReader reader = new SimpleOverlayDataReader();
-		this.data.addAll(reader
-				.readOverlayDataPlain(new File(stockId + ".csv")));
+		this.data.putAll(reader.readOverlayDataPlain(new File(overlayFile)));
 	}
 
 	@Override
-	public List<? extends IOverlayDataObject> getAll() throws OverlayException {
-		return this.data;
+	public List<? extends IOverlayDataObject> getAll(String stock)
+			throws OverlayException {
+		return null;
 	}
 
 	@Override
-	public List<? extends IOverlayDataObject> getByDate(String year,
+	public IOverlayDataObject getByDate(String stock, String year,
 			String month, String day) throws OverlayException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
-	public List<? extends IOverlayDataObject> getByDuration(String start,
-			String end) throws OverlayException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<? extends IOverlayDataObject> getByMonth(String year,
-			String month) throws OverlayException {
+	public IOverlayDataObject getByDate(String stock, Date day)
+			throws OverlayException {
 		// TODO Auto-generated method stub
 		return null;
 	}
