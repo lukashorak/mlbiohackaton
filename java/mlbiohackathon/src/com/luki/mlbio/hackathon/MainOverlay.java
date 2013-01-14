@@ -1,9 +1,11 @@
 package com.luki.mlbio.hackathon;
 
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -26,15 +28,23 @@ public class MainOverlay {
 
 		// TODO Auto-generated method stub
 
-		// if (args.length < 2) {
-		// System.out
-		// .println("Not enough parameters, use: <stockId> <date(yyyy-mm-dd)> <keys(key1,key2,...,keyn)>");
-		// return;
-		// }
-		//
-		// String stock = args[0];
-		// String day = args[1];
-		//
+		if (args.length < 2) {
+			System.out
+					.println("Not enough parameters, use: <stockId> <date(yyyy-mm-dd)> <keys(key1,key2,...,keyn)>");
+			return;
+		}
+
+		String stock = args[0];
+		String dateString = args[1];
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = null;
+		try {
+			date = sdf.parse(dateString);
+		} catch (ParseException e) {
+			throw new OverlayException("Can't parse date :" + dateString);
+		}
+
 		List<String> keys = new ArrayList<String>();
 		keys.add("key1");
 		if (args.length == 3) {
@@ -47,7 +57,7 @@ public class MainOverlay {
 
 		OverlayDataManager m = new OverlayDataManager(f.getName());
 
-		IOverlayDataObject obj = m.getByDate("2320", "2012", "11", "5", keys);
+		IOverlayDataObject obj = m.getByDate(stock, date, keys);
 		System.out.print(obj.getTick() + "\t" + sdf.format(obj.getDate()));
 
 		List<String> k = new ArrayList<String>();
